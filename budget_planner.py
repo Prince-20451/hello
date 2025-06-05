@@ -7,7 +7,20 @@ class BudgetPlanner:
     def __init__(self, root):
         self.root = root
         self.root.title("Budget Planner - Knapsack Algorithms")
-        self.root.geometry("900x700")
+        self.root.geometry("1000x800")
+        
+        # Configure style
+        self.style = ttk.Style()
+        self.style.theme_use('clam')  # Use clam theme as base
+        
+        # Configure colors and styles
+        self.style.configure('TFrame', background='#f0f0f0')
+        self.style.configure('TLabelframe', background='#f0f0f0')
+        self.style.configure('TLabelframe.Label', font=('Helvetica', 10, 'bold'), background='#f0f0f0')
+        self.style.configure('TButton', font=('Helvetica', 9), padding=5)
+        self.style.configure('TLabel', font=('Helvetica', 9), background='#f0f0f0')
+        self.style.configure('Treeview', font=('Helvetica', 9), rowheight=25)
+        self.style.configure('Treeview.Heading', font=('Helvetica', 9, 'bold'))
         
         # Items list to store (name, price, value) tuples
         self.items: List[Tuple[str, float, float]] = []
@@ -15,78 +28,99 @@ class BudgetPlanner:
         # Algorithm selection
         self.algorithm_var = tk.StringVar(value="0/1")
         
+        # Create main container with padding
+        main_container = ttk.Frame(self.root, padding="10")
+        main_container.pack(fill="both", expand=True)
+        
         # Create widgets
-        self.create_widgets()
+        self.create_widgets(main_container)
         
-    def create_widgets(self):
-        # Input Frame
-        input_frame = ttk.LabelFrame(self.root, text="Add Items", padding=10)
-        input_frame.pack(fill="x", padx=10, pady=5)
+    def create_widgets(self, parent):
+        # Input Frame with modern styling
+        input_frame = ttk.LabelFrame(parent, text="Add Items", padding=15)
+        input_frame.pack(fill="x", pady=(0, 10))
         
-        # Item name input
-        ttk.Label(input_frame, text="Item Name:").grid(row=0, column=0, padx=5, pady=5)
+        # Create a grid layout for inputs
+        input_grid = ttk.Frame(input_frame)
+        input_grid.pack(fill="x", padx=5, pady=5)
+        
+        # Item name input with improved layout
+        ttk.Label(input_grid, text="Item Name:").grid(row=0, column=0, padx=5, pady=5, sticky="e")
         self.name_var = tk.StringVar()
-        ttk.Entry(input_frame, textvariable=self.name_var).grid(row=0, column=1, padx=5, pady=5)
+        name_entry = ttk.Entry(input_grid, textvariable=self.name_var, width=20)
+        name_entry.grid(row=0, column=1, padx=5, pady=5)
         
         # Price input
-        ttk.Label(input_frame, text="Price:").grid(row=0, column=2, padx=5, pady=5)
+        ttk.Label(input_grid, text="Price ($):").grid(row=0, column=2, padx=5, pady=5, sticky="e")
         self.price_var = tk.StringVar()
-        ttk.Entry(input_frame, textvariable=self.price_var).grid(row=0, column=3, padx=5, pady=5)
+        price_entry = ttk.Entry(input_grid, textvariable=self.price_var, width=15)
+        price_entry.grid(row=0, column=3, padx=5, pady=5)
         
         # Value input
-        ttk.Label(input_frame, text="Value (Importance):").grid(row=0, column=4, padx=5, pady=5)
+        ttk.Label(input_grid, text="Value (Importance):").grid(row=0, column=4, padx=5, pady=5, sticky="e")
         self.value_var = tk.StringVar()
-        ttk.Entry(input_frame, textvariable=self.value_var).grid(row=0, column=5, padx=5, pady=5)
+        value_entry = ttk.Entry(input_grid, textvariable=self.value_var, width=15)
+        value_entry.grid(row=0, column=5, padx=5, pady=5)
         
-        # Add button
-        ttk.Button(input_frame, text="Add Item", command=self.add_item).grid(row=0, column=6, padx=5, pady=5)
+        # Add button with modern styling
+        add_btn = ttk.Button(input_grid, text="Add Item", command=self.add_item, style='Accent.TButton')
+        add_btn.grid(row=0, column=6, padx=5, pady=5)
         
-        # Algorithm selection frame
-        algo_frame = ttk.LabelFrame(self.root, text="Algorithm Selection", padding=10)
-        algo_frame.pack(fill="x", padx=10, pady=5)
+        # Algorithm selection frame with improved layout
+        algo_frame = ttk.LabelFrame(parent, text="Algorithm Selection", padding=15)
+        algo_frame.pack(fill="x", pady=(0, 10))
         
-        ttk.Radiobutton(algo_frame, text="0/1 Knapsack (Items cannot be divided)", 
-                       variable=self.algorithm_var, value="0/1").pack(side="left", padx=10)
+        algo_container = ttk.Frame(algo_frame)
+        algo_container.pack(fill="x", padx=5, pady=5)
         
-        ttk.Radiobutton(algo_frame, text="Fractional Knapsack (Items can be divided)", 
-                       variable=self.algorithm_var, value="fractional").pack(side="left", padx=10)
+        ttk.Radiobutton(algo_container, text="0/1 Knapsack (Items cannot be divided)", 
+                       variable=self.algorithm_var, value="0/1").pack(side="left", padx=20)
         
-        # Budget input
-        budget_frame = ttk.LabelFrame(self.root, text="Budget", padding=10)
-        budget_frame.pack(fill="x", padx=10, pady=5)
+        ttk.Radiobutton(algo_container, text="Fractional Knapsack (Items can be divided)", 
+                       variable=self.algorithm_var, value="fractional").pack(side="left", padx=20)
         
-        ttk.Label(budget_frame, text="Total Budget:").pack(side="left", padx=5)
+        # Budget input with modern styling
+        budget_frame = ttk.LabelFrame(parent, text="Budget", padding=15)
+        budget_frame.pack(fill="x", pady=(0, 10))
+        
+        budget_container = ttk.Frame(budget_frame)
+        budget_container.pack(fill="x", padx=5, pady=5)
+        
+        ttk.Label(budget_container, text="Total Budget ($):").pack(side="left", padx=5)
         self.budget_var = tk.StringVar()
-        ttk.Entry(budget_frame, textvariable=self.budget_var).pack(side="left", padx=5)
+        budget_entry = ttk.Entry(budget_container, textvariable=self.budget_var, width=15)
+        budget_entry.pack(side="left", padx=5)
         
-        # Optimize button
-        self.optimize_btn = ttk.Button(budget_frame, text="Optimize", command=self.optimize)
+        # Optimize button with modern styling
+        self.optimize_btn = ttk.Button(budget_container, text="Optimize", command=self.optimize, style='Accent.TButton')
         self.optimize_btn.pack(side="left", padx=5)
         
         # Clear all button
-        ttk.Button(budget_frame, text="Clear All", command=self.clear_all).pack(side="left", padx=5)
+        clear_btn = ttk.Button(budget_container, text="Clear All", command=self.clear_all)
+        clear_btn.pack(side="left", padx=5)
         
-        # Items list display
-        list_frame = ttk.LabelFrame(self.root, text="Items List", padding=10)
-        list_frame.pack(fill="both", expand=True, padx=10, pady=5)
+        # Items list display with improved styling
+        list_frame = ttk.LabelFrame(parent, text="Items List", padding=15)
+        list_frame.pack(fill="both", expand=True, pady=(0, 10))
         
-        # Create Treeview with scrollbar
+        # Create Treeview with scrollbar and modern styling
         tree_frame = ttk.Frame(list_frame)
-        tree_frame.pack(fill="both", expand=True)
+        tree_frame.pack(fill="both", expand=True, padx=5, pady=5)
         
-        self.tree = ttk.Treeview(tree_frame, columns=("Name", "Price", "Value", "Value/Price"), show="headings")
+        self.tree = ttk.Treeview(tree_frame, columns=("Name", "Price", "Value", "Value/Price"), 
+                                show="headings", style="Treeview")
         self.tree.heading("Name", text="Item Name")
-        self.tree.heading("Price", text="Price")
+        self.tree.heading("Price", text="Price ($)")
         self.tree.heading("Value", text="Value")
         self.tree.heading("Value/Price", text="Value/Price")
         
         # Configure column widths
-        self.tree.column("Name", width=200)
-        self.tree.column("Price", width=100)
-        self.tree.column("Value", width=100)
-        self.tree.column("Value/Price", width=100)
+        self.tree.column("Name", width=300)
+        self.tree.column("Price", width=150)
+        self.tree.column("Value", width=150)
+        self.tree.column("Value/Price", width=150)
         
-        # Add scrollbar
+        # Add scrollbar with modern styling
         scrollbar = ttk.Scrollbar(tree_frame, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=scrollbar.set)
         
@@ -96,18 +130,28 @@ class BudgetPlanner:
         # Bind double-click event
         self.tree.bind("<Double-1>", self.on_item_double_click)
         
-        # Results display
-        result_frame = ttk.LabelFrame(self.root, text="Results", padding=10)
-        result_frame.pack(fill="x", padx=10, pady=5)
+        # Results display with improved styling
+        result_frame = ttk.LabelFrame(parent, text="Results", padding=15)
+        result_frame.pack(fill="x", pady=(0, 10))
         
-        self.result_text = tk.Text(result_frame, height=8, wrap=tk.WORD)
-        self.result_text.pack(fill="x")
+        self.result_text = tk.Text(result_frame, height=8, wrap=tk.WORD, font=('Helvetica', 9))
+        self.result_text.pack(fill="x", padx=5, pady=5)
         
-        # Status bar
+        # Status bar with modern styling
         self.status_var = tk.StringVar()
         self.status_var.set("Ready")
-        status_bar = ttk.Label(self.root, textvariable=self.status_var, relief="sunken", anchor="w")
-        status_bar.pack(fill="x", padx=10, pady=5)
+        status_bar = ttk.Label(parent, textvariable=self.status_var, relief="sunken", 
+                             anchor="w", padding=(5, 2))
+        status_bar.pack(fill="x")
+        
+        # Configure custom styles
+        self.style.configure('Accent.TButton', 
+                           background='#007bff',
+                           foreground='white',
+                           padding=5)
+        
+        # Set initial button state
+        self.optimize_btn.state(["disabled"])
         
     def add_item(self):
         try:
