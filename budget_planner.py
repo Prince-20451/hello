@@ -35,7 +35,7 @@ class BudgetPlanner:
         # Create widgets
         self.create_widgets(main_container)
         
-    def create_widgets(self, parent):
+    def create_widget(self, parent):
         # Input Frame with modern styling
         input_frame = ttk.LabelFrame(parent, text="Add Items", padding=15)
         input_frame.pack(fill="x", pady=(0, 10))
@@ -153,7 +153,7 @@ class BudgetPlanner:
         # Set initial button state
         self.optimize_btn.state(["disabled"])
         
-    def add_item(self):
+    def add_items(self):
         try:
             name = self.name_var.get().strip()
             if not name:
