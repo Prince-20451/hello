@@ -35,7 +35,7 @@ class BudgetPlanner:
         # Create widgets
         self.create_widgets(main_container)
         
-    def create_widgets(self, parent):
+    def create_widget(self, parent):
         # Input Frame with modern styling
         input_frame = ttk.LabelFrame(parent, text="Add Items", padding=15)
         input_frame.pack(fill="x", pady=(0, 10))
